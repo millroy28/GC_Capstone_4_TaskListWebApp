@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "AddSubTask";
+}
+
+@model EachTask
+
+<h1>Add SubTask</h1>
+
+<h4>Add a subtask to parent task @Model.Title</h4>
+
+<form action="/TaskList/AddSubTask" method="post">
+    <input type="text" name="Title" placeholder="Task Name" />
+    <input type="text" name="Description" placeholder="Description" />
+    <input type="date" name="DueDate" />
+    <input type="hidden" name="Complete" value="false" />
+    <input type="hidden" name="Parent" value="false" />
+    <input type="hidden" name="ParentTaskId" value="@Model.Id" />
+    <input type="submit" value="Add This SubTask" />
+
+
+</form>
+
+
+@Html.ValidationSummary()
+

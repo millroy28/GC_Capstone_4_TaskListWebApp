@@ -55,6 +55,43 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult AddSubTask(int id)
+        {
+            EachTask parentTask = _context.Task.Find(id);
+            
+            return View(parentTask);
+        }
+        [HttpPost]
+        public IActionResult AddSubTask(EachTask newTask)
+        {
+            newTask.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            if (ModelState.IsValid)
+            {
+                EachTask newParentTask = _context.Task.Find(newTask.ParentTaskId);
+                newParentTask.Parent = true;
+
+                _context.Entry(newParentTask).State = Microsoft.EntityFrameworkCore.EntityState.Modified;  //remember to copy paste this honkin thing
+                _context.Update(newParentTask);
+                _context.SaveChanges();
+
+            }
+
+
+            if (ModelState.IsValid)
+            {
+
+                _context.Task.Add(newTask);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
         public IActionResult CompleteStatusToggle(int id)
         {
             EachTask selectedTask = _context.Task.Find(id);

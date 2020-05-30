@@ -163,3 +163,4 @@ C:\Users\millr\source\repos\GC_CAPSTONE4_TASKLIST\GC_CAPSTONE4_TASKLIST\obj\Debu
 C:\Users\millr\source\repos\GC_CAPSTONE4_TASKLIST\GC_CAPSTONE4_TASKLIST\obj\Debug\netcoreapp3.1\Razor\Views\TaskList\DeleteTask.cshtml.g.cs
 C:\Users\millr\source\repos\GC_CAPSTONE4_TASKLIST\GC_CAPSTONE4_TASKLIST\obj\Debug\netcoreapp3.1\Razor\Views\TaskList\EditTask.cshtml.g.cs
 C:\Users\millr\source\repos\GC_CAPSTONE4_TASKLIST\GC_CAPSTONE4_TASKLIST\obj\Debug\netcoreapp3.1\Razor\Views\TaskList\ViewAll.cshtml.g.cs
+C:\Users\millr\source\repos\GC_CAPSTONE4_TASKLIST\GC_CAPSTONE4_TASKLIST\obj\Debug\netcoreapp3.1\Razor\Views\TaskList\AddSubTask.cshtml.g.cs
