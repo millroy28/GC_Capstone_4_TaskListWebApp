@@ -1,0 +1,99 @@
+﻿
+
+@{
+    ViewData["Title"] = "View All Tasks";
+}
+
+@model List<EachTask>
+
+<h1>Your Tasklist:</h1>
+
+@if (Model.Count == 0)
+{
+    <h2>Welcome! It appears your task list is empty!</h2>
+    <h3>Click <a href="/TaskList/AddTask">here</a> to begin adding tasks!</h3>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <td><a href="/TaskList/ViewAll">View All Tasks</a></td>
+            <td><a href="/TaskList/Index">View Only Complete Tasks</a></td>
+            <td><a href="/TaskList/AddTask">Add A Task</a></td>
+        </tr>
+    </table>
+    <table class="table table-primary">
+        <tr>
+            <th>Task Title</th>
+            <th>Description</th>
+            <th>Days Until Due</th>
+            <th>Due Date</th>
+            <th>Completion</th>
+            <th>Edit Task</th>
+            <th>Delete Task</th>
+
+        </tr>
+        @foreach (var t in Model)
+        {
+            //converts database date to c# DateTime
+            //saves difference as string indicating days till due or "past due"
+            DateTime dueDate = Convert.ToDateTime(t.DueDate);
+            int daysUntillDue = (dueDate - DateTime.Now).Days;
+            string daysUntilDueString = daysUntillDue.ToString();
+            if (daysUntillDue < 0)
+            {
+                daysUntilDueString = "Past Due!";
+            }
+            else if (daysUntillDue == 0)
+            {
+                daysUntilDueString = "Today!";
+            }
+
+
+            if (t.Complete == true)
+            {
+                <tr class="text-muted">
+                    <td>@t.Title</td>
+                    <td>@t.Description</td>
+                    <td>-</td>
+                    <td>@dueDate.ToShortDateString()</td>
+                    <td><a href="/TaskList/CompleteStatusToggle?id=@t.Id">Complete</a></td>
+                    <td><a href="/TaskList/EditTask?id=@t.Id">Edit</a></td>
+                    <td><a href="/TaskList/DeleteTask?id=@t.Id">Delete</a></td>
+                </tr>
+            }
+            else if (t.DueDate < DateTime.Today)
+            {
+                <tr class="text-danger">
+                    <td>@t.Title</td>
+                    <td>@t.Description</td>
+                    <td>@daysUntilDueString</td>
+                    <td>@dueDate.ToShortDateString()</td>
+                    <td><a href="/TaskList/CompleteStatusToggle?id=@t.Id">Incomplete</a></td>
+                    <td><a href="/TaskList/EditTask?id=@t.Id">Edit</a></td>
+                    <td><a href="/TaskList/DeleteTask?id=@t.Id">Delete</a></td>
+
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@t.Title</td>
+                    <td>@t.Description</td>
+                    <td>@daysUntilDueString</td>
+                    <td>@dueDate.ToShortDateString()</td>
+                    <td><a href="/TaskList/CompleteStatusToggle?id=@t.Id">Incomplete</a></td>
+                    <td><a href="/TaskList/EditTask?id=@t.Id">Edit</a></td>
+                    <td><a href="/TaskList/DeleteTask?id=@t.Id">Delete</a></td>
+
+                </tr>
+            }
+
+        }
+    </table>
+
+}
+
+
+
+

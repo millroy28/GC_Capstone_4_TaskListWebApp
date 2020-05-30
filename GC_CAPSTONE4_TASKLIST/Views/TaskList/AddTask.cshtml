@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewData["Title"] = "AddTask";
+}
+
+<h1>Add A Task</h1>
+<form action="/TaskList/AddTask" method="post">
+    <input type="text" name="Title" placeholder="Task Name" />
+    <input type="text" name="Description" placeholder="Description" />
+    <input type="date" name="DueDate" />
+    <input type="hidden" name="Complete" value="false" />
+    <input type="hidden" name="Parent" value="false" />
+    <input type="submit" value="Add This Task" />
+    
+
+</form>
+
+
+@Html.ValidationSummary()

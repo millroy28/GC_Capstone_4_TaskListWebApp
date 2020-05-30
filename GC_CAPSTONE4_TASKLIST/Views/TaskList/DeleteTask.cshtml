@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewData["Title"] = "DeleteTask";
+}
+@model EachTask
+<h1>Delete Task</h1>
+<h4>@Model.Title</h4>
+<p>@Model.Description</p>
+<p class="alert-danger">Are you sure you wish to delete this task? This action cannot be undone!</p>
+<table>
+    <td><a href="/TaskList/Index">Return to Task List View</a></td>
+    <td></td>
+    <td>
+        <form action="/TaskList/DeleteTask" method="post">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <input type="submit" value="Delete Task"/>
+        </form>
+    </td>
+</table>
+

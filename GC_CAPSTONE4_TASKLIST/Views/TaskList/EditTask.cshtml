@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewData["Title"] = "EditTask";
+}
+@model EachTask
+
+<h1>Edit Task</h1>
+<form action="/TaskList/EditTask" method="post" class="form-control">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="text" name="Title" value="@Model.Title" placeholder="@Model.Title" />
+    <input type="text" name="Description" value="@Model.Description" placeholder="@Model.Description" />
+    <input type="date"  name="DueDate" value="@Model.DueDate" />
+    <input type="submit" value="Submit Changes" />
+</form>
