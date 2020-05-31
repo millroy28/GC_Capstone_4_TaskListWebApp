@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GC_CAPSTONE4_TASKLIST.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace GC_CAPSTONE4_TASKLIST.Controllers
 {
@@ -19,11 +20,56 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+
+
+        public IActionResult Index(string viewOption, int singleId, string keyWord)
         {
+
+
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var thisUserTask = _context.Task.Where(x => x.UserId == id).ToList();
-            return View(thisUserTask);
+            List<EachTask> thisUserTaskList = new List<EachTask>();
+            switch (viewOption)
+            {
+                case "All":
+                    
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id).ToList();
+                    return View(thisUserTaskList);
+
+                case "Incomplete":
+                   
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
+                                                            x.Complete == false &&
+                                                            x.ParentTaskId == null).ToList();
+                    return View(thisUserTaskList);
+
+                case "Expand":
+                    
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
+                                                            x.Complete == false).ToList();
+                    return View(thisUserTaskList);
+
+                case "Single":
+                   
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
+                                                            x.Id == singleId ||
+                                                            x.ParentTaskId == singleId).ToList();
+                    return View(thisUserTaskList);
+
+                case "Search":
+
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
+                                                            x.Title.Contains(keyWord) ||
+                                                            x.Description.Contains(keyWord)).ToList();
+                    return View(thisUserTaskList);
+
+                default:
+                    thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
+                                                               x.Complete == false &&
+                                                               x.ParentTaskId == null).ToList();
+                    return View(thisUserTaskList);
+                    
+            }
+          
         }
 
         public IActionResult ViewAll()
@@ -40,7 +86,7 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
         }
         [HttpPost]
         public IActionResult AddTask(EachTask newTask)
-        {
+        {         
             newTask.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             if (ModelState.IsValid)
