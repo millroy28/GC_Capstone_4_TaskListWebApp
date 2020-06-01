@@ -189,18 +189,24 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
         [HttpGet]
         public IActionResult DeleteTask(int id)
         {
-            EachTask taskToDelete = _context.Task.Find(id);
-            return View(taskToDelete);
+            var tasksToDelete = _context.Task.Where(x => x.Id == id ||
+                                                    x.ParentTaskId == id).ToList();
+            return View(tasksToDelete);
         }
 
         [HttpPost]
-        public IActionResult DeleteTask(EachTask taskToDelete)
+        public IActionResult DeleteTask(string id) //Janky, do not like this. Change when you figure out how
         {
-            if(taskToDelete != null)
-            {
-                _context.Task.Remove(taskToDelete);
+            int idToDelete = int.Parse(id);
+            var tasksToDelete = _context.Task.Where(x => x.Id == idToDelete ||
+                                                    x.ParentTaskId == idToDelete).ToList();
+            
+            foreach (EachTask t in tasksToDelete)
+                {
+                    _context.Task.Remove(t);
+                }
                 _context.SaveChanges();
-            }
+            
             return RedirectToAction("Index");
         }
     }

@@ -2,19 +2,51 @@
 @{
     ViewData["Title"] = "DeleteTask";
 }
-@model EachTask
+@model List<EachTask>
 <h1>Delete Task</h1>
-<h4>@Model.Title</h4>
-<p>@Model.Description</p>
-<p class="alert-danger">Are you sure you wish to delete this task? This action cannot be undone!</p>
-<table>
-    <td><a href="/TaskList/Index">Return to Task List View</a></td>
-    <td></td>
-    <td>
-        <form action="/TaskList/DeleteTask" method="post">
-            <input type="hidden" name="Id" value="@Model.Id" />
-            <input type="submit" value="Delete Task"/>
-        </form>
-    </td>
-</table>
+
+@if (Model[0].Parent == true)
+{
+    <p class="alert-danger">Are you sure you wish to delete this task and all attached subtasks? This action cannot be undone!</p>
+    <table class="table table-primary">
+        @foreach (EachTask task in Model)
+        {
+            <tr>
+                @if (task.Parent == true)
+                {
+                    <td>@task.Title</td>
+                }
+                else
+                {
+                    <td> &nbsp &#x21B3 &nbsp @task.Title</td>
+                }
+                <td>@task.Description</td>
+            </tr>
+        }
+    </table>
+
+}
+else
+{
+    <p class="alert-danger">Are you sure you wish to delete this task? This action cannot be undone!</p>
+    <table class="table table-primary">
+        <tr>
+        <td>@Model[0].Title</td>
+        <td>@Model[0].Description</td>
+        </tr>
+    </table>
+ }
+
+        <table>
+            <tr>
+                <td><a href="/TaskList/Index">Return to Task List View</a></td>
+                <td></td>
+                <td>
+                    <form action="/TaskList/DeleteTask" method="post">
+                        <input type="hidden" name="Id" value="@Model[0].Id"/>
+                        <input type="submit" value="Delete Task" />
+                    </form>
+                </td>
+            </tr>
+        </table>
 
