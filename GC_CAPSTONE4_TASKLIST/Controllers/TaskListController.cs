@@ -24,39 +24,32 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
 
         public IActionResult Index(string viewOption, int singleId, string keyWord)
         {
-
-
             string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             List<EachTask> thisUserTaskList = new List<EachTask>();
             switch (viewOption)
             {
                 case "All":
-                    
                     thisUserTaskList = _context.Task.Where(x => x.UserId == id).ToList();
                     return View(thisUserTaskList);
 
                 case "Incomplete":
-                   
                     thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
                                                             x.Complete == false &&
                                                             x.ParentTaskId == null).ToList();
                     return View(thisUserTaskList);
 
                 case "Expand":
-                    
                     thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
                                                             x.Complete == false).ToList();
                     return View(thisUserTaskList);
 
                 case "Single":
-                   
                     thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
                                                             x.Id == singleId ||
                                                             x.ParentTaskId == singleId).ToList();
                     return View(thisUserTaskList);
 
                 case "Search":
-
                     thisUserTaskList = _context.Task.Where(x => x.UserId == id &&
                                                             x.Title.Contains(keyWord) ||
                                                             x.Description.Contains(keyWord)).ToList();
@@ -67,16 +60,7 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
                                                                x.Complete == false &&
                                                                x.ParentTaskId == null).ToList();
                     return View(thisUserTaskList);
-                    
             }
-          
-        }
-
-        public IActionResult ViewAll()
-        {
-            string id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var thisUserTask = _context.Task.Where(x => x.UserId == id).ToList();
-            return View(thisUserTask);
         }
 
         [HttpGet]
@@ -113,7 +97,7 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
         {
             newTask.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //changes parent class ID field to true
             {
                 EachTask newParentTask = _context.Task.Find(newTask.ParentTaskId);
                 newParentTask.Parent = true;
@@ -121,13 +105,10 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
                 _context.Entry(newParentTask).State = Microsoft.EntityFrameworkCore.EntityState.Modified;  //remember to copy paste this honkin thing
                 _context.Update(newParentTask);
                 _context.SaveChanges();
-
             }
 
-
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)  //adds child class
             {
-
                 _context.Task.Add(newTask);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -140,21 +121,34 @@ namespace GC_CAPSTONE4_TASKLIST.Controllers
 
         public IActionResult CompleteStatusToggle(int id)
         {
-            EachTask selectedTask = _context.Task.Find(id);
-            
-            if (selectedTask.Complete == false)
+            //Written so that clicking on the completion status will cause it to toggle to the opposite status. 
+            //If a parent is clicked, it, and all its children, are automatically toggled
+
+            var tasksToToggle = _context.Task.Where(x => x.Id == id ||
+                                                    x.ParentTaskId == id).ToList();
+
+            if (tasksToToggle[0].Complete == false)
             {
-                selectedTask.Complete = true;
+                foreach (EachTask task in tasksToToggle)
+                {
+                    task.Complete = true;
+                }
             }
             else
             {
-                selectedTask.Complete = false;
+                foreach (EachTask task in tasksToToggle)
+                {
+                    task.Complete = false;
+                }
             }
             
             if (ModelState.IsValid)
             {
-                _context.Entry(selectedTask).State = Microsoft.EntityFrameworkCore.EntityState.Modified;  //remember to copy paste this honkin thing
-                _context.Update(selectedTask);
+                foreach (EachTask task in tasksToToggle)
+                {
+                    _context.Entry(task).State = Microsoft.EntityFrameworkCore.EntityState.Modified;  //remember to copy paste this honkin thing
+                    _context.Update(task);                    
+                }
                 _context.SaveChanges();
             }
 
